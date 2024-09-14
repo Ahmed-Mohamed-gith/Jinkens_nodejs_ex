@@ -1,1 +1,31 @@
+pipeline{
+    agent any
+    stages {
+        stage ('Prepation') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/Ahmed-Mohamed-gith/Jinkens_nodejs_ex.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                withCredentials([usernamePassword(credentialsID:"test",usernameVariable:"username",passwordVariable:"pass")]){
+                sh 'docker build . -t ${username}/jenkins_sprints:v1.0'
+                sh 'docker login -u ${username} -p ${pass}'
+                sh 'docker push ${username}/jenkins_sprints:v1.0'
+                }
+            }
+        }
 
+        stage ('deploy') {
+            steps{
+                 withCredentials([usernamePassword(credentialsID:"test",usernameVariable:"username",passwordVariable:"pass")]){
+
+                sh 'docker build . -t ${username}/jenkins_sprints:v1.0'
+                }
+            }
+
+        }
+    }
+}
